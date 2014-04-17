@@ -6,7 +6,7 @@
 {% for post in posts  %}
     <h3>{{ post.title }}</h3>
     <p>{{ post.body }}</p>
-    <h6>Created {{ post.created_in_words }} ago</h6>
+    <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_id() }}</h6>
         <hr/>
     {% endfor %}
 
