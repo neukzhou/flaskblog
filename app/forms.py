@@ -17,20 +17,21 @@ class LoginForm(Form):
     remember_me = BooleanField('remember_me', default = False)
 
 class EditForm(Form):
-    nickname = TextField('nickname', validators = [Required()])
-    about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
+    title = TextField('Title', validators = [Required("Please enter title.")],
+                      filters=[strip_filter])
+    body = TextAreaField('Body', validators = [Required("Please enter body.")],
+                         filters=[strip_filter])
 
-    def __init__(self, original_nickname, *args, **kwargs):
+    def __init__(self, original_title, original_body, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
-        self.original_nickname = original_nickname
+        self.original_title = original_title
+        self.original_body = original_body
 
     def validate(self):
         if not Form.validate(self):
             return False
-        if self.nickname.data == self.original_nickname:
+        if self.title.data == self.original_title:
             return True
-        user = User.query.filter_by(nickname = self.nickname.data).first()
-        if user != None:
-            self.nickname.errors.append('This nickname is already in use. Please choose another one.')
-            return False
+        if self.body.data == self.original_body:
+            return True
         return True

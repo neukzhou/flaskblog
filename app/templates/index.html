@@ -6,7 +6,14 @@
 {% for post in posts  %}
     <h3>{{ post.title }}</h3>
     <p>{{ post.body }}</p>
-    <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_id() }}</h6>
+    <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_name() }}</h6>
+    <br/>
+    <h6>
+        {% if g.user.id == post.get_user_id() %}
+        <a href="{{ url_for('delete', id=post.id) }}">Delete</a>
+        |<a href="{{ url_for('edit', id=post.id) }}">Edit</a>
+        {% endif %}
+    </h6>
         <hr/>
     {% endfor %}
 

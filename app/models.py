@@ -63,4 +63,7 @@ class Post(db.Model):
         return time_ago_in_words(self.created)
 
     def get_user_id(self):
+        return User.query.get( self.user_id ).id
+    
+    def get_user_name(self):
         return User.query.get( self.user_id ).nickname

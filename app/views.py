@@ -1,13 +1,12 @@
 from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from app import app, db, lm, oid
-from forms import LoginForm, PostCreateForm
+from forms import LoginForm, PostCreateForm, EditForm
 from models import User, Post, ROLE_USER, ROLE_ADMIN
 import datetime
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     user = g.user
     posts = [
@@ -22,6 +21,7 @@ def index():
     ]
     posts = Post.all()
     #
+
     return render_template('index.html',
     posts = posts,
     user = user)
@@ -82,9 +82,9 @@ def logout():
     return redirect(url_for('index'))
 
 # nickname unique
-@app.route('/edit', methods = ['GET', 'POST'])
+@app.route('/create', methods = ['GET', 'POST'])
 @login_required
-def edit():
+def create():
     post = Post()
     form = PostCreateForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -98,3 +98,41 @@ def edit():
     return render_template('edit.html',
         form = form)
 
+@app.route('/edit/<int:id>', methods = ['GET', 'POST'])
+@login_required
+def edit(id):
+    post = Post.query.get(id)
+    form = EditForm(post.title, post.body)
+    if post == None:
+        flash('Post not found.')
+        return redirect(url_for('index'))
+    if post.user_id != g.user.id:
+        flash('You cannot delete this post.')
+        return redirect(url_for('index'))
+    if form.validate_on_submit():
+        db.session.query(Post).filter_by(id = id).update(
+            {"title": form.title.data, "body":form.body.data})
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('index'))
+    elif request.method != "POST":
+        form.title.data = post.title
+        form.body.data = post.body
+    return render_template('edit.html',
+        form = form)
+
+
+@app.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    post = Post.query.get(id)
+    if post == None:
+        flash('Post not found.')
+        return redirect(url_for('index'))
+    if post.user_id != g.user.id:
+        flash('You cannot delete this post.')
+        return redirect(url_for('index'))
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted.')
+    return redirect(url_for('index'))
