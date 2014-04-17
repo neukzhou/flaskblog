@@ -3,6 +3,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from app import app, db, lm, oid
 from forms import LoginForm, PostCreateForm
 from models import User, Post, ROLE_USER, ROLE_ADMIN
+import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -19,6 +20,7 @@ def index():
             'body': 'The Avengers movie was so cool!' 
         }
     ]
+    posts = Post.all()
     #
     return render_template('index.html',
     posts = posts,
@@ -83,5 +85,16 @@ def logout():
 @app.route('/edit', methods = ['GET', 'POST'])
 @login_required
 def edit():
-    form = EditForm(g.user.nickname)
+    post = Post()
+    form = PostCreateForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        form.populate_obj(post)
+        post.created = datetime.datetime.now()
+        post.user_id = g.user.id
+        db.session.add(post)
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('index'))
+    return render_template('edit.html',
+        form = form)
 

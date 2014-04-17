@@ -1,6 +1,8 @@
 from app import db
-import datetime
+from datetime import datetime
 from sqlalchemy import desc
+
+from webhelpers.date import time_ago_in_words
 
 
 ROLE_USER = 0
@@ -45,12 +47,16 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(120))
     body = db.Column(db.Text)
-    created = db.Column(db.DateTime, default=datetime.datetime.now())
+    created = db.Column(db.DateTime)
     # updated = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Post %r>' % (self.title)
+
+    @classmethod
+    def all(cls):
+        return Post.query.order_by(desc(Post.created)).all()
 
     @property
     def created_in_words(self):
