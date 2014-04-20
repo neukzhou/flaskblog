@@ -136,3 +136,10 @@ def delete(id):
     db.session.commit()
     flash('Your post has been deleted.')
     return redirect(url_for('index'))
+
+
+
+@app.route('/post/<int:id>')
+def show_post(id):
+    post = Post.get_by_id(id)
+    return render_template('post.html', post = post)

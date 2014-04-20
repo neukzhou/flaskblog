@@ -32,12 +32,12 @@ class User(db.Model):
 
     @staticmethod
     def make_unique_nickname(nickname):
-        if User.query.filter_by(nickname = nickname).first() == None:
+        if User.query.filter(nickname = nickname).first() == None:
             return nickname
         version = 2
         while True:
             new_nickname = nickname + str(version)
-            if User.query.filter_by(nickname = new_nickname).first() == None:
+            if User.query.filter(nickname = new_nickname).first() == None:
                 break
             version += 1
         return new_nickname
@@ -67,3 +67,7 @@ class Post(db.Model):
     
     def get_user_name(self):
         return User.query.get( self.user_id ).nickname
+
+    @classmethod
+    def get_by_id(cls, id):
+        return Post.query.get(id)
