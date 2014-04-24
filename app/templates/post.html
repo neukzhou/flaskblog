@@ -4,7 +4,7 @@
 
 <h2>Hi, {{g.user.nickname}}!</h2>
     <h3>{{ post.title }}</h3>
-    <p>{{ post.body }}</p>
+    <p>{{ post.body | safe }}</p>
     <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_name() }}</h6>
     <br/>
     <h6>

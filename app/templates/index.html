@@ -7,7 +7,7 @@
     <h3><a href="{{ url_for('show_post', id=post.id) }}">
         {{ post.title }}
     </a></h3>
-    <p>{{ post.body }}</p>
+    <p>{{ post.body | safe }}</p>
     <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_name() }}</h6>
     <br/>
     <h6>

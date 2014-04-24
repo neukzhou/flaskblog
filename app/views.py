@@ -143,3 +143,15 @@ def delete(id):
 def show_post(id):
     post = Post.get_by_id(id)
     return render_template('post.html', post = post)
+
+@app.route('/user/<nickname>')
+@login_required
+def user(nickname):    
+    user = User.query.filter_by(nickname = nickname).first()
+    if user == None:        
+        flash('User '+ nickname +' not found.')
+        return redirect(url_for('index'))    
+    posts = user.posts.all()
+    return render_template('index.html',        
+        user = user,        
+        posts = posts)
