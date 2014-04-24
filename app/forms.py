@@ -35,3 +35,6 @@ class EditForm(Form):
         if self.body.data == self.original_body:
             return True
         return True
+
+class PostForm(Form):
+    post = TextField('post', validators = [Required()])

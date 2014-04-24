@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Blog</title>
+    <link rel="stylesheet" href=""/>
+    <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+
+    <script type="text/javascript"src="{{ url_for('static', filename='tinymce/tinymce.min.js') }}"></script>
+
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea"
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <div clasa="page-header">
+        <h1>Flask Blog</h1>
+    </div>
+<header>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <ul class="nav">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                {% if g.user.is_authenticated() %}
+                <li><a href="{{ url_for('user', nickname=g.user.nickname) }}">Profile</a></li>
+                <li><a href="{{ url_for('create') }}">New Post</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</header>
+    
+    {% block content %}
+ 
+    {% endblock %}
+ 
+    <div class="modal-footer">
+        <h4>&copy; <a href="http://www.zhouhao.me">ZhouHao</a></h4>
+    </div>
+</div>
+
+</body>
+</html>
+

@@ -4,10 +4,15 @@ from app import app, db, lm, oid
 from forms import LoginForm, PostCreateForm, EditForm
 from models import User, Post, ROLE_USER, ROLE_ADMIN
 import datetime
+from config import POSTS_PER_PAGE
 
-@app.route('/')
-@app.route('/index')
-def index():
+from flask.ext.paginate import Pagination
+from sqlalchemy import desc
+
+@app.route('/', methods = ['GET', 'POST'])
+@app.route('/index', methods = ['GET', 'POST'])
+@app.route('/index/<int:page>', methods = ['GET', 'POST'])
+def index(page = 1):
     user = g.user
     posts = [
         { 
@@ -19,12 +24,19 @@ def index():
             'body': 'The Avengers movie was so cool!' 
         }
     ]
-    posts = Post.all()
-    #
 
+    posts = Post.query.order_by(desc(Post.created)).paginate(page, POSTS_PER_PAGE, False).items
+    pagination = Pagination(page=page, 
+                    total=len(Post.all()), 
+                    per_page=POSTS_PER_PAGE, 
+                    search=False,
+                    css_framework='bootstrap3', 
+                    record_name='posts')
     return render_template('index.html',
     posts = posts,
-    user = user)
+    user = user,
+    pagination=pagination,
+    )
 
 
 
@@ -145,13 +157,21 @@ def show_post(id):
     return render_template('post.html', post = post)
 
 @app.route('/user/<nickname>')
+@app.route('/index/<nickname>/<int:page>', methods = ['GET', 'POST'])
 @login_required
-def user(nickname):    
+def user(nickname, page=1):    
     user = User.query.filter_by(nickname = nickname).first()
     if user == None:        
         flash('User '+ nickname +' not found.')
         return redirect(url_for('index'))    
-    posts = user.posts.all()
+    posts = user.posts.order_by(desc(Post.created)).paginate(page, POSTS_PER_PAGE, False).items
+    pagination = Pagination(page=page, 
+                    total=len(user.posts.all()), 
+                    per_page=POSTS_PER_PAGE, 
+                    search=False,
+                    css_framework='bootstrap3', 
+                    record_name='posts')
     return render_template('index.html',        
         user = user,        
-        posts = posts)
+        posts = posts,
+        pagination = pagination)

@@ -2,16 +2,68 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Hi, {{g.user.nickname}}!</h2>
-    <h3>{{ post.title }}</h3>
-    <p>{{ post.body | safe }}</p>
-    <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_name() }}</h6>
-    <br/>
-    <h6>
-        {% if g.user.id == post.get_user_id() %}
-        <a href="{{ url_for('delete', id=post.id) }}">Delete</a>
-        | <a href="{{ url_for('edit', id=post.id) }}">Edit</a>
-        {% endif %}
-    </h6>
-        <hr/>
+<div class="blog-header">
+        <h1 class="blog-title"></h1>
+        <p class="lead blog-description"></p>
+</div>
+
+      <div class="row">
+
+        <div class="col-sm-8 blog-main">
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">{{ post.title }}</h2>
+            <p class="blog-post-meta">{{ post.created_in_words }} ago, by <a href="{{ url_for('user', nickname=post.get_user_name()) }}">{{ post.get_user_name() }}</a></p>
+            <h6>{% if g.user.id == post.get_user_id() %}
+                <a href="{{ url_for('delete', id=post.id) }}">Delete</a>
+                | <a href="{{ url_for('edit', id=post.id) }}"> Edit</a>
+            {% endif %}</h6>
+            <p>{{ post.body | safe }}</p>
+          </div><!-- /.blog-post -->
+
+        </div><!-- /.blog-main -->
+        
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p><a href="{{ url_for('user', nickname=post.get_user_name()) }}">{{ post.get_user_name() }}</a> <em>联系方式</em> 简介</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Archives</h4>
+            <ol class="list-unstyled">
+              <li><a href="#">March 2014</a></li>
+              <li><a href="#">February 2014</a></li>
+              <li><a href="#">January 2014</a></li>
+              <li><a href="#">December 2013</a></li>
+              <li><a href="#">November 2013</a></li>
+              <li><a href="#">October 2013</a></li>
+              <li><a href="#">September 2013</a></li>
+              <li><a href="#">August 2013</a></li>
+              <li><a href="#">July 2013</a></li>
+              <li><a href="#">June 2013</a></li>
+              <li><a href="#">May 2013</a></li>
+              <li><a href="#">April 2013</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li><a href="#">GitHub</a></li>
+              <li><a href="#">Twitter</a></li>
+              <li><a href="#">Facebook</a></li>
+            </ol>
+          </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div><!-- /.container -->
+
+    <div class="blog-footer">
+      <p>Blog template built for <a href="http://getbootstrap.com">Bootstrap</a> by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </div>
+
 {% endblock %} 

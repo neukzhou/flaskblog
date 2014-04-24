@@ -3,20 +3,22 @@
 {% block content %}
 
 <h2>Hi, {{user.nickname}}!</h2>
-{% for post in posts  %}
-    <h3><a href="{{ url_for('show_post', id=post.id) }}">
-        {{ post.title }}
-    </a></h3>
-    <p>{{ post.body | safe }}</p>
-    <h6>Created {{ post.created_in_words }} ago, by {{ post.get_user_name() }}</h6>
-    <br/>
-    <h6>
-        {% if g.user.id == post.get_user_id() %}
-        <a href="{{ url_for('delete', id=post.id) }}">Delete</a>
-        | <a href="{{ url_for('edit', id=post.id) }}">Edit</a>
-        {% endif %}
-    </h6>
-        <hr/>
-    {% endfor %}
 
+<div class="blog-header">
+        <h1 class="blog-title"></h1>
+        <p class="lead blog-description"></p>
+</div>
+{% for post in posts %}
+          <div class="blog-post">
+            <h2 class="blog-post-title"><a href="{{ url_for('show_post', id=post.id) }}">{{ post.title }}</a></h2>
+            <p class="blog-post-meta">{{ post.created_in_words }} ago, by <a href="{{ url_for('user', nickname=post.get_user_name()) }}">{{ post.get_user_name() }}</a></p>
+            <h6>{% if g.user.id == post.get_user_id() %}
+                <a href="{{ url_for('delete', id=post.id) }}">Delete</a>
+                | <a href="{{ url_for('edit', id=post.id) }}"> Edit</a>
+            {% endif %}</h6>
+            <p>{{ post.body | safe }}</p>
+          </div><!-- /.blog-post -->
+
+{% endfor %}
+{{ pagination.links|safe }}
 {% endblock %} 
